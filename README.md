@@ -39,8 +39,8 @@ The challenge provides a simplified explanation of how Gigaclear calculates the 
 
 6- Replace Hardcoded Data with File Import:
 
-    Replace the initial hardcoded graph data with actual data imported from the .graphml file.
-    Use graphlib for graph manipulation and xml2js for XML parsing.
+    Replace the initial hardcoded graph data with actual data imported from the .dot file.
+    Use dotparser for graph manipulation.
 
 7- Adjust the logic accordingly.
 

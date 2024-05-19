@@ -65,3 +65,7 @@ The challenge provides a simplified explanation of how Gigaclear calculates the 
 5- Run the script:
 
     node index.mjs
+
+5- Run the test suite:
+
+    npm test

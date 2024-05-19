@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import dotparser from "dotparser";
 import { rateCardA, rateCardB } from "./rateCards.mjs";
 
-const calculateCost = (graph, rateCard) => {
+export const calculateCost = (graph, rateCard) => {
   let totalCost = 0;
 
   for (let i = 0; i < graph[0].children.length; i++) {

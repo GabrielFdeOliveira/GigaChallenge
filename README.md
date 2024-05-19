@@ -46,6 +46,22 @@ The challenge provides a simplified explanation of how Gigaclear calculates the 
 
     Since the data is coming from somewhere else, we must update the logic to reflect that.
 
-8- Testing:
+## How to install and run de code
 
-    Create test cases to verify the correctness of the program. Include edge cases to ensure the program handles basic scenarios and requirements.
+1- Make sure you have Node.js and npm installed on your computer, if not, [go to the official website](https://nodejs.org/en)
+
+2- Clone this repository to your local machine using:
+
+    git clone https://github.com/GabrielFdeOliveira/GigaChallenge.git
+
+3- Navigate to the project directory:
+
+    cd GigaChallenge
+
+4- Install dependencies using npm:
+
+    npm install
+
+5- Run the script:
+
+    node index.mjs

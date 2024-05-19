@@ -70,6 +70,21 @@ const calculateCost = (graph, rateCard) => {
     }
   }
 
+  for (let i = 0; i < graph.connections.length; i++) {
+    try {
+      const connection = graph.connections[i];
+      const length = connection.length;
+      const material = connection.material;
+      if (material === "verge") {
+        totalCost += length * rateCard.trenchVerge;
+      } else if (material === "road") {
+        totalCost += length * rateCard.trenchRoad;
+      }
+    } catch (error) {
+      console.error("Error occurred while calculating cost:", error);
+    }
+  }
+
   return totalCost;
 };
 

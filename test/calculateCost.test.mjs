@@ -33,6 +33,7 @@ describe('Testing suite for the "calculateCost" function', () => {
         C [type=Chamber];
       }
     `);
+
     const cost = calculateCost(dotData, rateCardA);
     expect(cost).to.equal(
       rateCardA.cabinet + rateCardA.pot + rateCardA.chamber
@@ -50,5 +51,37 @@ describe('Testing suite for the "calculateCost" function', () => {
     expect(cost).to.equal(
       100 * rateCardA.trenchVerge + 50 * rateCardA.trenchRoad
     );
+  });
+
+  it("handles a large graph efficiently", async () => {
+    const largeGraphData = Array.from(
+      { length: 1000 },
+      (_, i) => `
+      A${i} -- B${i} [length=${i}, material=verge];
+    `
+    ).join("\n");
+
+    const dotData = dotparser(`
+      strict graph {
+        ${largeGraphData}
+      }
+    `);
+
+    const start = process.hrtime();
+    const cost = calculateCost(dotData, rateCardA);
+    const end = process.hrtime(start);
+
+    expect(cost).to.be.a("number");
+    expect(end[0]).to.be.lessThan(5);
+  });
+
+  it("throws an error with an invalid rate card", async () => {
+    const dotData = await fs.readFile("problem.dot", "utf8");
+    expect(() => calculateCost(dotData, null)).to.throw(Error);
+  });
+
+  it("throws an error with invalid DOT data", () => {
+    const dotData = "invalid graph data";
+    expect(() => dotparser(dotData)).to.throw(Error);
   });
 });

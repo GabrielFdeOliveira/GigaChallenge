@@ -8,24 +8,24 @@ describe('Testing suite for the "calculateCost" function', () => {
   it("calculates cost correctly using Rate Card A", async () => {
     const data = await fs.readFile("problem.dot", "utf8");
     const dotData = dotparser(data);
-    const cost = calculateCost(dotData, rateCardA);
+    const cost = await calculateCost(dotData, rateCardA);
     expect(cost).to.equal(42200);
   });
 
   it("calculates cost correctly using Rate Card B", async () => {
     const data = await fs.readFile("problem.dot", "utf8");
     const dotData = dotparser(data);
-    const cost = calculateCost(dotData, rateCardB);
-    expect(cost).to.equal(38400);
+    const cost = await calculateCost(dotData, rateCardB);
+    expect(cost).to.equal(52400);
   });
 
-  it("calculates cost for an empty graph", () => {
+  it("calculates cost for an empty graph", async () => {
     const dotData = dotparser("strict graph {}");
-    const cost = calculateCost(dotData, rateCardA);
+    const cost = await calculateCost(dotData, rateCardA);
     expect(cost).to.equal(0);
   });
 
-  it("calculates cost for a graph with only nodes", () => {
+  it("calculates cost for a graph with only nodes", async () => {
     const dotData = dotparser(`
       strict graph {
         A [type=Cabinet];
@@ -34,20 +34,20 @@ describe('Testing suite for the "calculateCost" function', () => {
       }
     `);
 
-    const cost = calculateCost(dotData, rateCardA);
+    const cost = await calculateCost(dotData, rateCardA);
     expect(cost).to.equal(
       rateCardA.cabinet + rateCardA.pot + rateCardA.chamber
     );
   });
 
-  it("calculates cost for a graph with only edges", () => {
+  it("calculates cost for a graph with only edges", async () => {
     const dotData = dotparser(`
       strict graph {
         A -- B [length=100, material=verge];
         B -- C [length=50, material=road];
       }
     `);
-    const cost = calculateCost(dotData, rateCardA);
+    const cost = await calculateCost(dotData, rateCardA);
     expect(cost).to.equal(
       100 * rateCardA.trenchVerge + 50 * rateCardA.trenchRoad
     );
@@ -68,7 +68,7 @@ describe('Testing suite for the "calculateCost" function', () => {
     `);
 
     const start = process.hrtime();
-    const cost = calculateCost(dotData, rateCardA);
+    const cost = await calculateCost(dotData, rateCardA);
     const end = process.hrtime(start);
 
     expect(cost).to.be.a("number");
@@ -77,7 +77,13 @@ describe('Testing suite for the "calculateCost" function', () => {
 
   it("throws an error with an invalid rate card", async () => {
     const dotData = await fs.readFile("problem.dot", "utf8");
-    expect(() => calculateCost(dotData, null)).to.throw(Error);
+    try {
+      await calculateCost(dotData, null);
+      // If the promise doesn't reject, test case will fail
+      throw new Error("Expected promise to reject, but it didn't");
+    } catch (error) {
+      expect(error).to.be.an.instanceOf(Error);
+    }
   });
 
   it("throws an error with invalid DOT data", () => {

@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "dotparser": "^1.1.1"
+    "dotparser": "^1.1.1",
+    "graphlib-dot": "^0.6.4"
   },
   "devDependencies": {
     "chai": "^5.1.1",

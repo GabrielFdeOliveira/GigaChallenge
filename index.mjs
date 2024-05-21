@@ -1,8 +1,9 @@
 import fs from "fs/promises";
 import dotparser from "dotparser";
 import { rateCardA, rateCardB } from "./rateCards.mjs";
+import { trenchLength } from "./trenchLength.mjs";
 
-export const calculateCost = (graph, rateCard) => {
+export const calculateCost = async (graph, rateCard) => {
   let totalCost = 0;
 
   for (let i = 0; i < graph[0].children.length; i++) {
@@ -20,21 +21,8 @@ export const calculateCost = (graph, rateCard) => {
           totalCost += rateCard.cabinet;
         } else if (attributes.type === "Pot") {
           if (rateCard.potToCabinetMultiplier) {
-            for (let k = 0; k < graph[0].children.length; k++) {
-              const connection = graph[0].children[k];
-              if (connection.type === "edge_stmt") {
-                const edgeList = connection.edge_list;
-                if (edgeList.some((node) => node.id === nodeId)) {
-                  const length = parseInt(
-                    connection.attr_list.find((attr) => attr.id === "length")
-                      .eq,
-                    10
-                  );
-                  totalCost += rateCard.potToCabinetMultiplier * length;
-                  break;
-                }
-              }
-            }
+            const length = await trenchLength(nodeId);
+            totalCost += rateCard.potToCabinetMultiplier * length;
           } else {
             totalCost += rateCard.pot;
           }
@@ -70,8 +58,8 @@ export const calculateCost = (graph, rateCard) => {
     // Parse the DOT file
     const dotData = dotparser(data);
 
-    const costA = calculateCost(dotData, rateCardA);
-    const costB = calculateCost(dotData, rateCardB);
+    const costA = await calculateCost(dotData, rateCardA);
+    const costB = await calculateCost(dotData, rateCardB);
 
     console.log(`Total cost using Rate Card A: ${costA}`);
     console.log(`Total cost using Rate Card B: ${costB}`);

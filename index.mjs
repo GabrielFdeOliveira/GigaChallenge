@@ -3,7 +3,7 @@ import dotparser from "dotparser";
 import { rateCardA, rateCardB } from "./rateCards.mjs";
 import { trenchLength } from "./trenchLength.mjs";
 
-export const calculateCost = async (graph, rateCard) => {
+export const calculateCost = (graph, rateCard) => {
   let totalCost = 0;
 
   for (let i = 0; i < graph[0].children.length; i++) {
@@ -14,14 +14,14 @@ export const calculateCost = async (graph, rateCard) => {
         const attributes = {};
         for (let j = 0; j < child.attr_list.length; j++) {
           const attr = child.attr_list[j];
-          attributes["type"] = attr.eq;
+          attributes[attr.id] = attr.eq;
         }
 
         if (attributes.type === "Cabinet") {
           totalCost += rateCard.cabinet;
         } else if (attributes.type === "Pot") {
           if (rateCard.potToCabinetMultiplier) {
-            const length = await trenchLength(nodeId);
+            const length = trenchLength(nodeId);
             totalCost += rateCard.potToCabinetMultiplier * length;
           } else {
             totalCost += rateCard.pot;

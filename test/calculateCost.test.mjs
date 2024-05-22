@@ -8,24 +8,24 @@ describe('Testing suite for the "calculateCost" function', () => {
   it("calculates cost correctly using Rate Card A", async () => {
     const data = await fs.readFile("problem.dot", "utf8");
     const dotData = dotparser(data);
-    const cost = await calculateCost(dotData, rateCardA);
+    const cost = calculateCost(dotData, rateCardA);
     expect(cost).to.equal(42200);
   });
 
   it("calculates cost correctly using Rate Card B", async () => {
     const data = await fs.readFile("problem.dot", "utf8");
     const dotData = dotparser(data);
-    const cost = await calculateCost(dotData, rateCardB);
+    const cost = calculateCost(dotData, rateCardB);
     expect(cost).to.equal(52400);
   });
 
-  it("calculates cost for an empty graph", async () => {
+  it("calculates cost for an empty graph", () => {
     const dotData = dotparser("strict graph {}");
-    const cost = await calculateCost(dotData, rateCardA);
+    const cost = calculateCost(dotData, rateCardA);
     expect(cost).to.equal(0);
   });
 
-  it("calculates cost for a graph with only nodes", async () => {
+  it("calculates cost for a graph with only nodes", () => {
     const dotData = dotparser(`
       strict graph {
         A [type=Cabinet];
@@ -34,26 +34,26 @@ describe('Testing suite for the "calculateCost" function', () => {
       }
     `);
 
-    const cost = await calculateCost(dotData, rateCardA);
+    const cost = calculateCost(dotData, rateCardA);
     expect(cost).to.equal(
       rateCardA.cabinet + rateCardA.pot + rateCardA.chamber
     );
   });
 
-  it("calculates cost for a graph with only edges", async () => {
+  it("calculates cost for a graph with only edges", () => {
     const dotData = dotparser(`
       strict graph {
         A -- B [length=100, material=verge];
         B -- C [length=50, material=road];
       }
     `);
-    const cost = await calculateCost(dotData, rateCardA);
+    const cost = calculateCost(dotData, rateCardA);
     expect(cost).to.equal(
       100 * rateCardA.trenchVerge + 50 * rateCardA.trenchRoad
     );
   });
 
-  it("handles a large graph efficiently", async () => {
+  it("handles a large graph efficiently", () => {
     const largeGraphData = Array.from(
       { length: 1000 },
       (_, i) => `
@@ -68,7 +68,7 @@ describe('Testing suite for the "calculateCost" function', () => {
     `);
 
     const start = process.hrtime();
-    const cost = await calculateCost(dotData, rateCardA);
+    const cost = calculateCost(dotData, rateCardA);
     const end = process.hrtime(start);
 
     expect(cost).to.be.a("number");
@@ -77,13 +77,7 @@ describe('Testing suite for the "calculateCost" function', () => {
 
   it("throws an error with an invalid rate card", async () => {
     const dotData = await fs.readFile("problem.dot", "utf8");
-    try {
-      await calculateCost(dotData, null);
-      // If the promise doesn't reject, test case will fail
-      throw new Error("Expected promise to reject, but it didn't");
-    } catch (error) {
-      expect(error).to.be.an.instanceOf(Error);
-    }
+    expect(() => calculateCost(dotData, null)).to.throw(Error);
   });
 
   it("throws an error with invalid DOT data", () => {
